@@ -1,0 +1,18 @@
+services:
+  nginx:
+    build: ./src/front
+    ports:
+      - "80:80"
+    networks:
+      - my_network
+
+  backend:
+    build: ./src/back
+    ports:
+      - "8080:8080"
+    networks:
+      - my_network
+
+networks:
+  my_network:
+    driver: bridge

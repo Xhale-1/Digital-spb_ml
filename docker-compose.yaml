@@ -12,6 +12,13 @@ services:
       - "8080:8080"
     networks:
       - my_network
+  
+  ai:
+    build: ./src/ai
+    ports:
+      - "8081:8081"
+    networks:
+      - my_network
 
 networks:
   my_network:

@@ -1,4 +1,4 @@
-Для работы сервиса необходимо скачать файлы с моего гугл диск и добавить в onnxmodel в ai/code, а data_graph в tree2
+Для работы сервиса необходимо скачать файлы с моего гугл диск и добавить в onnxmodel в ai/code, а data_graph в tree2/code
 
 data_graph:
 https://drive.google.com/drive/folders/1voyjEH9X5gpAq3C48vu5F27Vd2tPT6WQ?usp=sharing

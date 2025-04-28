@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <style>
+      th, td {
+        color: rgb(232, 241, 255);
+        padding: 8px;
+        text-align: left;
+        font-family: Arial, Helvetica, sans-serif;
+      }
+
+      tr {
+        width: 1000;
+      }
+
+      #searchbar {
+        border: 0px;
+        border-radius: 10px;
+        /*background: #e6f0ff;*/
+        /*padding: 10px;*/
+        font-size: medium;
+        width: 100%;
+        /* background-image: url('static/images/frutiger1.jpg'); */
+        background-image: linear-gradient(rgb(21, 82, 93), rgb(163, 255, 238));
+        background-repeat: no-repeat;
+        background-size: cover;
+        padding-bottom: 10px;
+      }
+
+      #searchbar_inside{
+        width: 90%;
+        margin-left: 5%;
+      }
+
+      #textentry{
+        /* border-radius: 10px; */
+        /* margin-left: 10%; */
+        box-shadow: inset 1px 1px 3px #323948;
+        border: 0px;
+        font-size: medium;
+        width: 80%;
+      }
+
+      #textentry_label{
+        height: 30%;
+        border: 0px;
+        font-size: medium;
+        padding: 10px;
+        font-family: Arial, Helvetica, sans-serif;
+        color: white;
+      }
+
+      #tentry_area{
+        padding: 10px;
+        width: 100%;
+        border-radius: 10px;
+        background-color: white;
+      }
+
+      #demo{
+        border-radius: 10px;
+        background-image: url('static/images/parafrutiger.png');
+        background-repeat: no-repeat;
+        background-size: 100% 100%;
+        color:#e6f0ff;
+        width: 100%;
+      }
+
+    </style>
+   <meta charset="UTF-8">
+   <title>Welcome Page</title>
+  </head>
+  <body>
+    <h1>Welcome!</h1>
+    <p>Welcome to our simple Flask app.</p>
+
+    <div id="searchbar">
+      <div id="searchbar_inside">
+      <p id="textentry_label">
+        Введите адрес
+      </p>
+      <div id="tentry_area"> 
+        <button type="button" onclick="sendSeachRequest(document.getElementById('textentry').value)">
+          🔎
+        </button>
+
+        <input id="textentry"
+            type="text"
+            id="name"
+            name="name"
+            required
+            maxlength="128" />
+        
+
+        </div>
+
+    <p id="demo"></p>
+      </div>
+    </div>
+    
+    <p><a href="/about">About this site</a></p>
+  </body>
+  <script>
+    function sendSeachRequest(searchdata){
+        fetch("/search", {
+            method: "POST",
+            body: JSON.stringify({
+                address : searchdata
+            }),
+            headers: {
+                "Content-type": "application/json; charset=UTF-8"
+            }
+            })
+            .then((response) => response.json())
+            .then((json) => {
+              console.log(json.response); 
+
+              document.getElementById('demo').outerHTML = '<table id="demo"></table>'
+              
+              for (var i = 0; i < json.response.length; i++) {
+                console.log(json.response[i]); 
+                console.log(i); 
+                new_row = document.createElement("tr")
+                document.getElementById('demo').appendChild(new_row)
+                new_line = document.createElement("th")
+                new_line.innerHTML = json.response[i]
+                new_row.appendChild(new_line)
+              }
+              
+              //document.getElementById('demo').innerHTML = json.response;
+
+            
+            });
+
+    }
+  </script>
+</html>

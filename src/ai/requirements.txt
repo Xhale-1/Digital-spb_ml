@@ -1,3 +1,4 @@
 tokenizers
 numpy
 onnxruntime
+Flask

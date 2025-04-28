@@ -1,2 +1,5 @@
 /src/ai/code/onnxModel/midMybert.onnx
 /src/ai/code/tokenizer/tokenizer.json
+
+/src/tree2/code/fias_dict/fias_dict.csv
+/src/tree2/code/fias_dict/ojf_dict2.csv

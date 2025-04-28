@@ -3,9 +3,9 @@ import onnxruntime
 import numpy as np
 from tokenizers import Tokenizer
 
+predictions = []
 
-
-def get_word_preds(inputs_ids):
+def get_word_preds(inputs_ids, predictions):
 
     tokens = [tokenizer.id_to_token(id) for id in inputs_ids]
     #print(tokens)
@@ -91,32 +91,6 @@ tokenizer = Tokenizer.from_file("./tokenizer/tokenizer.json")
 
 
 
-# _____токенизация______________________________________________________
-
-
-# Текст
-text = "ул. Маяковская, 48, литера А"
-
-# Токенизация
-encoded = tokenizer.encode(text)
-
-# Преобразование в нужный формат
-input_ids = encoded.ids
-attention_mask = encoded.attention_mask
-
-# Приведение к фиксированной длине (например, 128)
-max_length = 128
-pad_id = tokenizer.token_to_id("[PAD]")  # Убедись, что у тебя есть [PAD] в словаре
-
-input_ids += [pad_id] * (max_length - len(input_ids))
-attention_mask += [0] * (max_length - len(attention_mask))
-
-
-# Преобразуем в numpy массивы
-input_ids = np.array([input_ids], dtype=np.int64)
-attention_mask = np.array([attention_mask], dtype=np.int64)
-
-
 
 
 
@@ -125,34 +99,65 @@ attention_mask = np.array([attention_mask], dtype=np.int64)
 
 #____Инференс_________________________________________________________
 
-# Получение выходов
-outputs = session.run(
-    None,
-    {
-        "input_ids": input_ids,
-        "attention_mask": attention_mask
-    }
-)
 
-# Результат
-logits = outputs[0]
+def inference(text):
+    global session        
 
-# Берём argmax по логитам
-predictions = np.argmax(logits, axis=-1)
-#print(predictions)
+# _____токенизация______________________________________________________
 
+    # Текст
+    #text = "ул. Маяковская, 48, литера А"
 
-words, classes = get_word_preds(input_ids[0])
-#print(words)
-#print(classes)
+    # Токенизация
+    encoded = tokenizer.encode(text)
 
+    # Преобразование в нужный формат
+    input_ids = encoded.ids
+    attention_mask = encoded.attention_mask
 
-merged_words, merged_classes = merge_entities(words, classes)
-#print(merged_words)
-#print(merged_classes)
+    # Приведение к фиксированной длине (например, 128)
+    max_length = 128
+    pad_id = tokenizer.token_to_id("[PAD]")  # Убедись, что у тебя есть [PAD] в словаре
+
+    input_ids += [pad_id] * (max_length - len(input_ids))
+    attention_mask += [0] * (max_length - len(attention_mask))
 
 
-import json
-data = [{'word': w, 'label': l} for w, l in zip(merged_words, merged_classes)]
-json_string = json.dumps(data, ensure_ascii=False, indent=2)
-print(json_string)
+    # Преобразуем в numpy массивы
+    input_ids = np.array([input_ids], dtype=np.int64)
+    attention_mask = np.array([attention_mask], dtype=np.int64)
+
+
+
+    # Получение выходов
+    outputs = session.run(
+        None,
+        {
+            "input_ids": input_ids,
+            "attention_mask": attention_mask
+        }
+    )
+
+    # Результат
+    logits = outputs[0]
+
+    # Берём argmax по логитам
+    predictions = np.argmax(logits, axis=-1)
+    #print(predictions)
+
+
+    words, classes = get_word_preds(input_ids[0], predictions)
+    #print(words)
+    #print(classes)
+
+
+    merged_words, merged_classes = merge_entities(words, classes)
+    #print(merged_words)
+    #print(merged_classes)
+
+
+    import json
+    data = [{'value': w, 'type': l} for w, l in zip(merged_words, merged_classes)]
+    json_string = json.dumps(data, ensure_ascii=False, indent=2)
+    print("AI response:",json_string)
+    return json_string
